@@ -14,6 +14,7 @@ namespace MusicStore.Controllers
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
+            SignInManager = signInManager;
         }
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
