@@ -19,7 +19,7 @@ namespace MusicStore.Controllers
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
 
-        public SignInManager<ApplicationUser> SignInManager { get; private set; }
+        public ApplicationSignInManager SignInManager { get; private set; }
 
         //
         // GET: /Account/Login
