@@ -38,7 +38,7 @@ namespace MusicStore.Models
 
         protected override void OnConfiguring(DbContextOptions builder)
         {
-            builder.UseSqlServer(_configuration.Get("Identity:DefaultConnection:ConnectionString"));
+            builder.UseSqlServer(_configuration.Get("Data:IdentityConnection:ConnectionString"));
         }
     }
 }
