@@ -50,11 +50,8 @@ public class Startup
 
             /*Add all EF related services to IoC.
             Using an InMemoryStore in K until SQL server is available.*/
-#if NET45
             services.AddEntityFramework(s => s.AddSqlServer());
-#else
             services.AddEntityFramework(s => s.AddInMemoryStore());
-#endif
             services.AddTransient<MusicStoreContext>();
 
 
@@ -63,13 +60,14 @@ public class Startup
              * Using an InMemory store to store membership data until SQL server is available. 
              * Users created will be lost on application shutdown.
              */
+            services.AddTransient<DbContext, ApplicationDbContext>();
 
             //Bug: https://github.com/aspnet/Identity/issues/50
             services.AddIdentity<ApplicationUser, IdentityRole>(s =>
             {
                 //s.UseDbContext(() => context);
                 //s.UseUserStore(() => new UserStore(context));
-                s.AddInMemory();
+                s.AddEntity();
                 s.AddUserManager<ApplicationUserManager>();
                 s.AddRoleManager<ApplicationRoleManager>();
             });
@@ -117,9 +115,10 @@ public class Startup
 
         //Populates the MusicStore sample data
         SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
+        SampleData.InitializeIdentityDatabaseAsync(app.ApplicationServices).Wait();
 
         //Creates a Store manager user who can manage the store.
-        CreateAdminUser(app.ApplicationServices).Wait();
+        //CreateAdminUser(app.ApplicationServices).Wait(); // todo: sql identity doesn't support roles yet
     }
 
     /// <summary>
