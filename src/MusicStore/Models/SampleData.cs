@@ -32,6 +32,21 @@ namespace MusicStore.Models
             }
         }
 
+        public static async Task InitializeIdentityDatabaseAsync(IServiceProvider serviceProvider)
+        {
+            using (var db = new ApplicationDbContext(serviceProvider))
+            {
+                var sqlServerDataStore = db.Configuration.DataStore as SqlServerDataStore;
+                if (sqlServerDataStore != null)
+                {
+                    if (!await db.Database.ExistsAsync())
+                    {
+                        await db.Database.CreateAsync();
+                    }
+                }
+            }
+        }
+
         private static async Task InsertTestData(IServiceProvider serviceProvider)
         {
             var albums = GetAlbums(imgUrl, Genres, Artists);
