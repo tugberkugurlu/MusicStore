@@ -72,16 +72,6 @@ public class Startup
                 s.AddRoleManager<ApplicationRoleManager>();
             });
             services.AddTransient<ApplicationSignInManager>();
-            // Turn off password defaults since register error display blows up
-            services.SetupOptions<IdentityOptions>(
-                options =>
-                {
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonLetterOrDigit = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredLength = 0;
-                });
         });
 
 

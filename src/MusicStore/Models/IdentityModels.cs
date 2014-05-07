@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Entity;
 using Microsoft.AspNet.Identity.Security;
 using Microsoft.Data.Entity;
+using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 
 namespace MusicStore.Models
@@ -27,12 +28,17 @@ namespace MusicStore.Models
 
     public class ApplicationDbContext : IdentitySqlContext<ApplicationUser> 
     {
-        public ApplicationDbContext(IServiceProvider services) : base(services) { }
+        private readonly IConfiguration _configuration;
+
+        public ApplicationDbContext(IServiceProvider serviceProvider, IConfiguration configuration)
+            : base(serviceProvider)
+        {
+            _configuration = configuration;
+        }
 
         protected override void OnConfiguring(DbContextOptions builder)
         {
-            // TODO: pull connection string from config
-            builder.UseSqlServer(@"Server=(localdb)\v11.0;Database=MusicStoreIdentity;Trusted_Connection=True;");
+            builder.UseSqlServer(_configuration.Get("Identity:DefaultConnection:ConnectionString"));
         }
     }
 }
