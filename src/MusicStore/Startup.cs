@@ -50,19 +50,14 @@ public class Startup
             services.AddEntityFramework(s => s.AddInMemoryStore());
             services.AddTransient<MusicStoreContext>();
 
-
             /*
              * Add all Identity related services to IoC. 
-             * Using an InMemory store to store membership data until SQL server is available. 
-             * Users created will be lost on application shutdown.
              */
             services.AddTransient<DbContext, ApplicationDbContext>();
 
             //Bug: https://github.com/aspnet/Identity/issues/50
             services.AddIdentity<ApplicationUser, IdentityRole>(s =>
             {
-                //s.UseDbContext(() => context);
-                //s.UseUserStore(() => new UserStore(context));
                 s.AddEntity();
                 s.AddUserManager<ApplicationUserManager>();
                 s.AddRoleManager<ApplicationRoleManager>();
@@ -83,12 +78,6 @@ public class Startup
         {
             AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
             LoginPath = new PathString("/Account/Login"),
-            Notifications = new CookieAuthenticationNotifications
-            {
-                //OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                //        validateInterval: TimeSpan.FromMinutes(30),
-                //        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
-            }
         });
 
         app.UseMvc(routes =>
