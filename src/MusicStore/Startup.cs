@@ -108,7 +108,7 @@ public class Startup
         SampleData.InitializeIdentityDatabaseAsync(app.ApplicationServices).Wait();
 
         //Creates a Store manager user who can manage the store.
-        //CreateAdminUser(app.ApplicationServices).Wait(); // todo: sql identity doesn't support roles yet
+        CreateAdminUser(app.ApplicationServices).Wait();
     }
 
     /// <summary>
@@ -121,22 +121,22 @@ public class Startup
         var configuration = serviceProvider.GetService<IConfiguration>();
         var userName = configuration.Get("DefaultAdminUsername");
         var password = configuration.Get("DefaultAdminPassword");
-        const string adminRole = "Administrator";
+        //const string adminRole = "Administrator";
 
         var userManager = serviceProvider.GetService<ApplicationUserManager>();
-        var roleManager = serviceProvider.GetService<ApplicationRoleManager>();
-
-        if (!await roleManager.RoleExistsAsync(adminRole))
-        {
-            await roleManager.CreateAsync(new IdentityRole(adminRole));
-        }
+        // Todo: identity sql does not support roles yet
+        //var roleManager = serviceProvider.GetService<ApplicationRoleManager>();
+        //if (!await roleManager.RoleExistsAsync(adminRole))
+        //{
+        //    await roleManager.CreateAsync(new IdentityRole(adminRole));
+        //}
 
         var user = await userManager.FindByNameAsync(userName);
         if (user == null)
         {
             user = new ApplicationUser { UserName = userName };
             await userManager.CreateAsync(user, password);
-            await userManager.AddToRoleAsync(user, adminRole);
+            //await userManager.AddToRoleAsync(user, adminRole);
             await userManager.AddClaimAsync(user, new Claim("ManageStore", "Allowed"));
         }
     }
