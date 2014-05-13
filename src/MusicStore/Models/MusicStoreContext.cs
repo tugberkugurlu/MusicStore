@@ -18,7 +18,7 @@ namespace MusicStore.Models
 
         public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
-        public DbSet<Order> Orders { get; set; }
+        public DbSet<Orders> Orders { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -32,7 +32,7 @@ namespace MusicStore.Models
         {
             builder.Entity<Album>().Key(a => a.AlbumId);
             builder.Entity<Artist>().Key(a => a.ArtistId);
-            builder.Entity<Order>().Key(o => o.OrderId).StorageName("[Order]");
+            builder.Entity<Orders>().Key(o => o.OrderId).StorageName("Orders");
             builder.Entity<Genre>().Key(g => g.GenreId);
             builder.Entity<CartItem>().Key(c => c.CartItemId);
             builder.Entity<OrderDetail>().Key(o => o.OrderDetailId);

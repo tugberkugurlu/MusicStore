@@ -9,6 +9,6 @@
         public decimal UnitPrice { get; set; }
 
         public virtual Album Album { get; set; }
-        public virtual Order Order { get; set; }
+        public virtual Orders Order { get; set; }
     }
 }
