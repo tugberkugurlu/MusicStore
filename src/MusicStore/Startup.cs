@@ -36,12 +36,11 @@ public class Startup
             services.AddTransient<MusicStoreContext>();
 
             //Add all Identity related services to IoC. 
-            services.AddTransient<DbContext, ApplicationDbContext>();
-            services.AddIdentity<ApplicationUser, IdentityRole>(s =>
-            {
-                s.AddEntity();
-            });
-            services.AddTransient<SignInManager<ApplicationUser>>();
+            services.AddIdentity<ApplicationUser>()
+                .AddEntityFramework<ApplicationUser, ApplicationDbContext>()
+                .AddHttpSignIn();
+
+
         });
 
 

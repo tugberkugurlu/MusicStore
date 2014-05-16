@@ -33,7 +33,7 @@ namespace MusicStore.Models
 
         public static async Task InitializeIdentityDatabaseAsync(IServiceProvider serviceProvider)
         {
-            using (var db = serviceProvider.GetService<DbContext>() as ApplicationDbContext)
+            using (var db = serviceProvider.GetService<ApplicationDbContext>())
             {
                 var sqlServerDataStore = db.Configuration.DataStore as SqlServerDataStore;
                 if (sqlServerDataStore != null)
