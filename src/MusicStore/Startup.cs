@@ -3,7 +3,7 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Security;
+using Microsoft.AspNet.Identity.Authentication;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Security.Cookies;
 using Microsoft.Data.Entity;
