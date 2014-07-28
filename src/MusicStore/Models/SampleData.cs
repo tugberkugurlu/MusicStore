@@ -102,6 +102,16 @@ namespace MusicStore.Models
                 //await userManager.AddToRoleAsync(user, adminRole);
                 await userManager.AddClaimAsync(user, new Claim("ManageStore", "Allowed"));
             }
+
+            for (int i = 0; i < 100; ++i)
+            {
+                var name = string.Format("User{0:D3}", i);
+                var normalUser = await userManager.FindByNameAsync(name);
+                if (normalUser == null)
+                {
+                    await userManager.CreateAsync(new ApplicationUser { UserName = name }, "Password~!1");
+                }
+            }
         }
 
         private static Album[] GetAlbums(string imgUrl, Dictionary<string, Genre> genres, Dictionary<string, Artist> artists)
