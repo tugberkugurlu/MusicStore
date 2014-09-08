@@ -105,11 +105,11 @@ namespace MusicStore.Models
 
             for (int i = 0; i < 100; ++i)
             {
-                var name = string.Format("User{0:D3}", i);
-                var normalUser = await userManager.FindByNameAsync(name);
+                var email = string.Format("User{0:D3}@sample.com", i);
+                var normalUser = await userManager.FindByEmailAsync(email);
                 if (normalUser == null)
                 {
-                    await userManager.CreateAsync(new ApplicationUser { UserName = name }, "Password~!1");
+                    await userManager.CreateAsync(new ApplicationUser { UserName = email, Email = email }, "Password~!1");
                 }
             }
         }
