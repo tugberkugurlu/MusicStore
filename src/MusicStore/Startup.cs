@@ -32,10 +32,10 @@ namespace MusicStore
             //Note: ErrorPageOptions.ShowAll to be used only at development time. Not recommended for production.
             app.UseErrorPage(ErrorPageOptions.ShowAll);
 
-            app.SetDefaultSignInAsAuthenticationType("External");
-
             app.UseServices(services =>
             {
+                // TODO: services.UseOptions(identityOptions);
+
                 //If this type is present - we're on mono
                 var runningOnMono = Type.GetType("Mono.Runtime") != null;
 
@@ -69,8 +69,7 @@ namespace MusicStore
                         });
 
                 // Add Identity services to the services container
-                services.AddIdentitySqlServer<MusicStoreContext, ApplicationUser>()
-                        .AddAuthentication();
+                services.AddIdentitySqlServer<MusicStoreContext, ApplicationUser>();
 
                 // Add MVC services to the services container
                 services.AddMvc();
@@ -90,21 +89,7 @@ namespace MusicStore
             app.UseStaticFiles();
 
             // Add cookie-based authentication to the request pipeline
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = "External",
-                AuthenticationMode = AuthenticationMode.Passive,
-                ExpireTimeSpan = TimeSpan.FromMinutes(5)
-            });
-
-            // Add cookie-based authentication to the request pipeline
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = ClaimsIdentityOptions.DefaultAuthenticationType,
-                LoginPath = new PathString("/Account/Login")
-            });
-
-            app.UseTwoFactorSignInCookies();
+            app.UseIdentity();
 
             app.UseFacebookAuthentication(new FacebookAuthenticationOptions()
             {
