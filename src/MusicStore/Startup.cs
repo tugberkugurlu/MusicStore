@@ -34,8 +34,6 @@ namespace MusicStore
 
             app.UseServices(services =>
             {
-                // TODO: services.UseOptions(identityOptions);
-
                 //If this type is present - we're on mono
                 var runningOnMono = Type.GetType("Mono.Runtime") != null;
 
