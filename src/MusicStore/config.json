@@ -1,0 +1,9 @@
+﻿{
+    "DefaultAdminUsername": "Administrator@test.com",
+    "DefaultAdminPassword": "YouShouldChangeThisPassword1!",
+    "Data": {
+        "DefaultConnection": {
+            "Connectionstring": "Server=(localdb)\\MSSQLLocalDB;Database=MusicStore;Trusted_Connection=True;MultipleActiveResultSets=true"
+        }
+    }
+}

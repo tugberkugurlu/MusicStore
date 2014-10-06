@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.Data.Entity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNet.Http;
 
 namespace MusicStore.Models
 {
@@ -95,13 +94,23 @@ namespace MusicStore.Models
 
         public int GetCount()
         {
+            int sum = 0;
+            //https://github.com/aspnet/EntityFramework/issues/557
             // Get the count of each item in the cart and sum them up
-            int? count = (from cartItems in _db.CartItems
-                          where cartItems.CartId == ShoppingCartId
-                          select (int?)cartItems.Count).Sum();
+            var cartItemCounts = (from cartItems in _db.CartItems
+                                  where cartItems.CartId == ShoppingCartId
+                                  select (int?)cartItems.Count);
+
+            cartItemCounts.ForEachAsync(carItemCount =>
+            {
+                if (carItemCount.HasValue)
+                {
+                    sum += carItemCount.Value;
+                }
+            });
 
             // Return 0 if all entries are null
-            return count ?? 0;
+            return sum;
         }
 
         public decimal GetTotal()

@@ -9,25 +9,30 @@ using Microsoft.Data.Entity;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using MusicStore.Models;
+using Microsoft.AspNet.Security.Facebook;
+using Microsoft.AspNet.Security.Google;
+using Microsoft.AspNet.Security.Twitter;
+using Microsoft.AspNet.Security.MicrosoftAccount;
+using Microsoft.AspNet.Security;
+using Microsoft.Framework.Cache.Memory;
 
 namespace MusicStore
 {
     public class Startup
     {
-        public void Configure(IBuilder app)
+        public void Configure(IApplicationBuilder app)
         {
-            /* Adding IConfiguration as a service in the IoC to avoid instantiating Configuration again.
-                 * Below code demonstrates usage of multiple configuration sources. For instance a setting say 'setting1' is found in both the registered sources, 
-                 * then the later source will win. By this way a Local config can be overridden by a different setting while deployed remotely.
-            */
-            var configuration = new Configuration();
-            configuration.AddJsonFile("LocalConfig.json");
-            configuration.AddEnvironmentVariables(); //All environment variables in the process's context flow in as configuration values.
+            //Below code demonstrates usage of multiple configuration sources. For instance a setting say 'setting1' is found in both the registered sources, 
+            //then the later source will win. By this way a Local config can be overridden by a different setting while deployed remotely.
+            var configuration = new Configuration()
+                        .AddJsonFile("config.json")
+                        .AddEnvironmentVariables(); //All environment variables in the process's context flow in as configuration values.
 
-	     /* Error page middleware displays a nice formatted HTML page for any unhandled exceptions in the request pipeline.
-             * Note: ErrorPageOptions.ShowAll to be used only at development time. Not recommended for production.
-             */
+            //Error page middleware displays a nice formatted HTML page for any unhandled exceptions in the request pipeline.
+            //Note: ErrorPageOptions.ShowAll to be used only at development time. Not recommended for production.
             app.UseErrorPage(ErrorPageOptions.ShowAll);
+
+            app.SetDefaultSignInAsAuthenticationType("External");
 
             app.UseServices(services =>
             {
@@ -69,7 +74,17 @@ namespace MusicStore
 
                 // Add MVC services to the services container
                 services.AddMvc();
+
+                //Add all SignalR related services to IoC.
+                services.AddSignalR();
+
+                //Add InMemoryCache
+                //Currently not able to AddSingleTon
+                services.AddInstance<IMemoryCache>(new MemoryCache());
             });
+
+            //Configure SignalR
+            app.UseSignalR();
 
             // Add static files to the request pipeline
             app.UseStaticFiles();
@@ -77,13 +92,53 @@ namespace MusicStore
             // Add cookie-based authentication to the request pipeline
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
+                AuthenticationType = "External",
+                AuthenticationMode = AuthenticationMode.Passive,
+                ExpireTimeSpan = TimeSpan.FromMinutes(5)
+            });
+
+            // Add cookie-based authentication to the request pipeline
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
                 AuthenticationType = ClaimsIdentityOptions.DefaultAuthenticationType,
-                LoginPath = new PathString("/Account/Login"),
+                LoginPath = new PathString("/Account/Login")
+            });
+
+            app.UseTwoFactorSignInCookies();
+
+            app.UseFacebookAuthentication(new FacebookAuthenticationOptions()
+            {
+                AppId = "[AppId]",
+                AppSecret = "[AppSecret]",
+            });
+
+            app.UseGoogleAuthentication(new GoogleAuthenticationOptions()
+            {
+                ClientId = "[ClientId]",
+                ClientSecret = "[ClientSecret]",
+            });
+
+            app.UseTwitterAuthentication(new TwitterAuthenticationOptions()
+            {
+                ConsumerKey = "[ConsumerKey]",
+                ConsumerSecret = "[ConsumerSecret]",
+            });
+
+            app.UseMicrosoftAccountAuthentication(new MicrosoftAccountAuthenticationOptions()
+            {
+                Caption = "MicrosoftAccount - Requires project changes",
+                ClientId = "[ClientId]",
+                ClientSecret = "[ClientSecret]",
             });
 
             // Add MVC to the request pipeline
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "areaRoute",
+                    template: "{area:exists}/{controller}/{action}",
+                    defaults: new { action = "Index" });
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
